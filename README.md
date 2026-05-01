@@ -1,5 +1,7 @@
 # TC Token Optimizer
 
+[English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
+
 TC Token Optimizer is a working MVP for reducing Traditional Chinese token overhead in coding-agent workflows. It combines a compact agent skill, Claude Code hooks, a CLI wrapper, and a reproducible token-savings experiment.
 
 The source guide and handoff in this repository describe the architectural reason for the wrapper: Claude Code hooks can modify tool inputs with `updatedInput`, but `UserPromptSubmit` cannot rewrite the user prompt before it enters context. Prompt optimization therefore has to happen before the `claude` binary receives the prompt.
@@ -64,7 +66,7 @@ Method:
 - The experiment uses a local deterministic proxy tokenizer in `src/tokenizer.js`.
 - Passing threshold is at least 30% fewer measured tokens for every fixture.
 
-These are proxy measurements for repeatability. They demonstrate relative compression in this project’s test harness, not exact Claude Code billing or Anthropic tokenizer counts.
+These are proxy measurements for repeatability. They demonstrate relative compression in this project's test harness, not exact Claude Code billing or Anthropic tokenizer counts.
 
 ## Latest Recorded Results
 
@@ -99,7 +101,7 @@ npm run measure:tokens
 npm run smoke
 ```
 
-The project is JavaScript-only ESM. Tests use Node’s built-in `node:test` and run files sequentially for Windows sandbox compatibility.
+The project is JavaScript-only ESM. Tests use Node's built-in `node:test` and run files sequentially for Windows sandbox compatibility.
 
 ## Limits
 
