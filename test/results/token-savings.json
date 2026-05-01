@@ -1,0 +1,34 @@
+[
+  {
+    "fixture_name": "tc-prompt",
+    "transformation_type": "protected prompt optimization",
+    "control_tokens": 214,
+    "variable_tokens": 26,
+    "tokens_saved": 188,
+    "percent_reduction": 87.85
+  },
+  {
+    "fixture_name": "tc-source",
+    "transformation_type": "shadow file comment compaction",
+    "control_tokens": 247,
+    "variable_tokens": 74,
+    "tokens_saved": 173,
+    "percent_reduction": 70.04
+  },
+  {
+    "fixture_name": "verbose-trace",
+    "transformation_type": "trace compaction",
+    "control_tokens": 109,
+    "variable_tokens": 43,
+    "tokens_saved": 66,
+    "percent_reduction": 60.55
+  },
+  {
+    "fixture_name": "verbose-response",
+    "transformation_type": "SKILL.md caveman response",
+    "control_tokens": 237,
+    "variable_tokens": 21,
+    "tokens_saved": 216,
+    "percent_reduction": 91.14
+  }
+]

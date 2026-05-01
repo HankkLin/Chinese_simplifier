@@ -1,0 +1,29 @@
+{
+  "name": "tc-token-optimizer",
+  "version": "1.0.0",
+  "description": "Traditional Chinese token optimization skill, hooks, wrapper, and reproducible token-savings experiments for coding agents.",
+  "type": "module",
+  "bin": {
+    "tc-claude": "./wrapper/tc-claude.js"
+  },
+  "scripts": {
+    "test": "node test/token-optimizer.test.js && node test/wrapper.test.js",
+    "measure:tokens": "node scripts/measure-token-savings.js",
+    "smoke": "npm test && npm run measure:tokens"
+  },
+  "keywords": [
+    "claude-code",
+    "codex",
+    "tokenization",
+    "traditional-chinese",
+    "coding-agents"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "js-tiktoken": "^1.0.20",
+    "node-opencc": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

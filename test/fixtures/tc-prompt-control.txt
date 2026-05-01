@@ -1,0 +1,1 @@
+請修正 `parseUser()` 的錯誤處理流程。當輸入資料缺少 email、name 或 role 欄位時，目前函式會傳回不一致的錯誤訊息，導致前端表單無法正確顯示驗證結果。請保留 src/utils/user-parser.ts 的公開介面，不要改變測試檔案名稱，最後執行 npm test -- --runInBand 並回報最小必要變更。

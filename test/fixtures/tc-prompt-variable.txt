@@ -1,0 +1,1 @@
+Fix error handling for `parseUser()`. Run npm test. Preserve src/utils/user-parser.ts --runInBand.
