@@ -12,7 +12,7 @@ const child = spawn(invocation.command, invocation.args, {
     ...process.env,
     TC_CLAUDE_WRAPPED: '1'
   },
-  shell: process.platform === 'win32'
+  ...invocation.options
 });
 
 for (const signal of ['SIGINT', 'SIGTERM']) {
