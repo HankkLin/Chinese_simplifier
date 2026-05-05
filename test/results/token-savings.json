@@ -3,9 +3,9 @@
     "fixture_name": "tc-prompt",
     "transformation_type": "protected prompt optimization",
     "control_tokens": 214,
-    "variable_tokens": 26,
-    "tokens_saved": 188,
-    "percent_reduction": 87.85
+    "variable_tokens": 53,
+    "tokens_saved": 161,
+    "percent_reduction": 75.23
   },
   {
     "fixture_name": "tc-source",
