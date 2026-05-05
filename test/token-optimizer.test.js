@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { getCjkRatio, hasCjk, shouldOptimizeText } from '../src/cjk.js';
 import { translateWithProtection } from '../src/translate.js';
@@ -93,6 +93,61 @@ test('PostToolUse restore fails closed without reliable shadow metadata', async 
   const result = await handlePostToolUse({ tool_name: 'Write', tool_input: { file_path: '/tmp/tc-shadow/x.ts' } }, { mode: 'restore' });
   assert.equal(result.decision, 'block');
   assert.match(result.reason, /restore metadata/i);
+});
+
+test('PostToolUse restore maps changed shadow back to original only when original hash matches', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'tc-token-restore-test-'));
+  try {
+    const tcFile = join(dir, 'sample-tc-file.ts');
+    const tcComment = JSON.parse('"\\u9019\\u88e1\\u6703\\u9a57\\u8b49\\u4f7f\\u7528\\u8005\\u8f38\\u5165"');
+    await writeFile(tcFile, `// ${tcComment}\nexport const ok = true;\n`, 'utf8');
+
+    const preResult = await handlePreToolUse({ tool_name: 'Read', tool_input: { file_path: tcFile } });
+    const shadowPath = preResult.updatedInput.file_path;
+    await writeFile(shadowPath, '// compact note\nexport const ok = false;\n', 'utf8');
+
+    const restoreResult = await handlePostToolUse({
+      tool_name: 'Write',
+      tool_input: { file_path: shadowPath }
+    }, { mode: 'restore' });
+
+    assert.equal(restoreResult.decision, 'allow');
+    assert.equal(restoreResult.restored, true);
+    assert.equal(restoreResult.updatedInput.file_path, tcFile);
+    assert.equal(await readFile(tcFile, 'utf8'), '// compact note\nexport const ok = false;\n');
+
+    await rm(dirname(shadowPath), { recursive: true, force: true });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('PostToolUse restore blocks stale originals before overwriting', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'tc-token-stale-restore-test-'));
+  try {
+    const tcFile = join(dir, 'sample-tc-file.ts');
+    const staleContents = '// changed outside shadow flow\nexport const ok = true;\n';
+    const tcComment = JSON.parse('"\\u9019\\u88e1\\u6703\\u9a57\\u8b49\\u4f7f\\u7528\\u8005\\u8f38\\u5165"');
+    await writeFile(tcFile, `// ${tcComment}\nexport const ok = true;\n`, 'utf8');
+
+    const preResult = await handlePreToolUse({ tool_name: 'Read', tool_input: { file_path: tcFile } });
+    const shadowPath = preResult.updatedInput.file_path;
+    await writeFile(shadowPath, '// compact note\nexport const ok = false;\n', 'utf8');
+    await writeFile(tcFile, staleContents, 'utf8');
+
+    const restoreResult = await handlePostToolUse({
+      tool_name: 'Write',
+      tool_input: { file_path: shadowPath }
+    }, { mode: 'restore' });
+
+    assert.equal(restoreResult.decision, 'block');
+    assert.match(restoreResult.reason, /hash is stale/i);
+    assert.equal(await readFile(tcFile, 'utf8'), staleContents);
+
+    await rm(dirname(shadowPath), { recursive: true, force: true });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
 });
 
 test('token experiment records control and variable groups with 30 percent minimum reduction', async () => {

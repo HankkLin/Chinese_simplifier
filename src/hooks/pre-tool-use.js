@@ -31,7 +31,28 @@ export async function handlePreToolUse(payload) {
   await mkdir(shadowDir, { recursive: true });
   const shadowPath = join(shadowDir, basename(filePath));
   const shadowContents = await optimizeSourceForShadow(contents);
+  const originalHash = createHash('sha256').update(contents).digest('hex');
+  const shadowHash = createHash('sha256').update(shadowContents).digest('hex');
+  const metadataPath = join(shadowDir, '.tc-shadow.metadata.json');
+  const metadata = {
+    version: 1,
+    originalPath: filePath,
+    shadowPath,
+    originalSha256: originalHash,
+    shadowSha256: shadowHash,
+    createdAt: new Date().toISOString()
+  };
   await writeFile(shadowPath, shadowContents, 'utf8');
+  await writeFile(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`, 'utf8');
 
-  return { updatedInput: { file_path: shadowPath } };
+  return {
+    updatedInput: { file_path: shadowPath },
+    metadata: { tcShadow: { ...metadata, metadataPath } },
+    additionalContext: [
+      'TC shadow read metadata:',
+      `shadowPath=${shadowPath}`,
+      `originalPath=${filePath}`,
+      `originalSha256=${originalHash}`
+    ].join('\n')
+  };
 }
