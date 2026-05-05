@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { getCjkRatio, hasCjk, shouldOptimizeText } from '../src/cjk.js';
 import { translateWithProtection } from '../src/translate.js';
 import { compactTrace } from '../src/trace.js';
+import { optimizeSourceForShadow } from '../src/source-shadow.js';
 import { handlePreToolUse } from '../src/hooks/pre-tool-use.js';
 import { handlePostToolUse } from '../src/hooks/post-tool-use.js';
 import { runTokenExperiment } from '../src/experiment.js';
@@ -87,6 +88,26 @@ test('PreToolUse Read redirects TC files to shadow copies and no-ops English fil
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('source shadow compacts CJK comments into concise semantic summaries', async () => {
+  const input = [
+    '// TODO: \u9a57\u8b49\u767b\u5165 token \u6b0a\u9650\uff0c\u907f\u514d\u672a\u6388\u6b0a\u5b58\u53d6',
+    'const token = request.headers.authorization;',
+    '  // FIXME: \u8655\u7406\u4ed8\u6b3e\u932f\u8aa4\uff0c\u4fdd\u6301 Order \u72c0\u614b',
+    '  return processOrder(Order);',
+    '// \u6548\u80fd: \u5feb\u53d6 productCatalog \u8a2d\u5b9a\uff0c\u907f\u514d\u91cd\u8907\u67e5\u8a62',
+    'export const productCatalog = loadCatalog();'
+  ].join('\n');
+
+  const output = await optimizeSourceForShadow(input);
+
+  assert.match(output, /^\/\/ TODO; auth\/security; validation; domain: token\.$/m);
+  assert.match(output, /^  \/\/ FIXME; error handling; domain: Order\.$/m);
+  assert.match(output, /^\/\/ performance; configuration; domain: productCatalog\.$/m);
+  assert.match(output, /const token = request\.headers\.authorization;/);
+  assert.match(output, /  return processOrder\(Order\);/);
+  assert.match(output, /export const productCatalog = loadCatalog\(\);/);
 });
 
 test('PostToolUse restore fails closed without reliable shadow metadata', async () => {
