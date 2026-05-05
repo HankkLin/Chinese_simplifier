@@ -1,34 +1,122 @@
 [
   {
     "fixture_name": "tc-prompt",
+    "fixture_source": "inline",
     "transformation_type": "protected prompt optimization",
-    "control_tokens": 214,
-    "variable_tokens": 26,
-    "tokens_saved": 188,
-    "percent_reduction": 87.85
+    "minimum_proxy_reduction": 0,
+    "proxy": {
+      "method": "deterministic-proxy",
+      "control_tokens": 214,
+      "variable_tokens": 26,
+      "tokens_saved": 188,
+      "percent_reduction": 87.85
+    },
+    "tokenizer": {
+      "method": "js-tiktoken",
+      "control_tokens": 151,
+      "variable_tokens": 25,
+      "tokens_saved": 126,
+      "percent_reduction": 83.44
+    }
   },
   {
     "fixture_name": "tc-source",
+    "fixture_source": "inline",
     "transformation_type": "shadow file comment compaction",
-    "control_tokens": 247,
-    "variable_tokens": 74,
-    "tokens_saved": 173,
-    "percent_reduction": 70.04
+    "minimum_proxy_reduction": 30,
+    "proxy": {
+      "method": "deterministic-proxy",
+      "control_tokens": 247,
+      "variable_tokens": 74,
+      "tokens_saved": 173,
+      "percent_reduction": 70.04
+    },
+    "tokenizer": {
+      "method": "js-tiktoken",
+      "control_tokens": 180,
+      "variable_tokens": 68,
+      "tokens_saved": 112,
+      "percent_reduction": 62.22
+    }
   },
   {
     "fixture_name": "verbose-trace",
+    "fixture_source": "inline",
     "transformation_type": "trace compaction",
-    "control_tokens": 109,
-    "variable_tokens": 43,
-    "tokens_saved": 66,
-    "percent_reduction": 60.55
+    "minimum_proxy_reduction": 30,
+    "proxy": {
+      "method": "deterministic-proxy",
+      "control_tokens": 109,
+      "variable_tokens": 43,
+      "tokens_saved": 66,
+      "percent_reduction": 60.55
+    },
+    "tokenizer": {
+      "method": "js-tiktoken",
+      "control_tokens": 134,
+      "variable_tokens": 51,
+      "tokens_saved": 83,
+      "percent_reduction": 61.94
+    }
   },
   {
     "fixture_name": "verbose-response",
+    "fixture_source": "inline",
     "transformation_type": "SKILL.md caveman response",
-    "control_tokens": 237,
-    "variable_tokens": 21,
-    "tokens_saved": 216,
-    "percent_reduction": 91.14
+    "minimum_proxy_reduction": 30,
+    "proxy": {
+      "method": "deterministic-proxy",
+      "control_tokens": 237,
+      "variable_tokens": 21,
+      "tokens_saved": 216,
+      "percent_reduction": 91.14
+    },
+    "tokenizer": {
+      "method": "js-tiktoken",
+      "control_tokens": 153,
+      "variable_tokens": 23,
+      "tokens_saved": 130,
+      "percent_reduction": 84.97
+    }
+  },
+  {
+    "fixture_name": "fixture-file-tc-prompt",
+    "fixture_source": "test/fixtures/tc-prompt-control.txt",
+    "transformation_type": "protected prompt optimization",
+    "minimum_proxy_reduction": 30,
+    "proxy": {
+      "method": "deterministic-proxy",
+      "control_tokens": 214,
+      "variable_tokens": 25,
+      "tokens_saved": 189,
+      "percent_reduction": 88.32
+    },
+    "tokenizer": {
+      "method": "js-tiktoken",
+      "control_tokens": 151,
+      "variable_tokens": 24,
+      "tokens_saved": 127,
+      "percent_reduction": 84.11
+    }
+  },
+  {
+    "fixture_name": "fixture-file-tc-source",
+    "fixture_source": "test/fixtures/sample-tc-file.ts",
+    "transformation_type": "shadow file comment compaction",
+    "minimum_proxy_reduction": 30,
+    "proxy": {
+      "method": "deterministic-proxy",
+      "control_tokens": 260,
+      "variable_tokens": 87,
+      "tokens_saved": 173,
+      "percent_reduction": 66.54
+    },
+    "tokenizer": {
+      "method": "js-tiktoken",
+      "control_tokens": 193,
+      "variable_tokens": 81,
+      "tokens_saved": 112,
+      "percent_reduction": 58.03
+    }
   }
 ]

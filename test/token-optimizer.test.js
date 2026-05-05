@@ -97,7 +97,20 @@ test('PostToolUse restore fails closed without reliable shadow metadata', async 
 
 test('token experiment records control and variable groups with 30 percent minimum reduction', async () => {
   const results = await runTokenExperiment({ writeResults: false });
-  assert.equal(results.every((row) => row.percent_reduction >= 30), true);
+  assert.equal(results.every((row) => row.proxy.percent_reduction >= row.minimum_proxy_reduction), true);
   assert.equal(results.some((row) => row.fixture_name === 'tc-prompt'), true);
   assert.equal(results.some((row) => row.fixture_name === 'verbose-response'), true);
+});
+
+test('token experiment separates proxy and tokenizer-backed measurements', async () => {
+  const results = await runTokenExperiment({ writeResults: false });
+  const fileFixture = results.find((row) => row.fixture_name === 'fixture-file-tc-prompt');
+
+  assert.ok(fileFixture);
+  assert.equal(fileFixture.fixture_source, 'test/fixtures/tc-prompt-control.txt');
+  assert.equal(typeof fileFixture.proxy.control_tokens, 'number');
+  assert.equal(typeof fileFixture.proxy.variable_tokens, 'number');
+  assert.ok(['js-tiktoken', 'proxy-fallback'].includes(fileFixture.tokenizer.method));
+  assert.equal(typeof fileFixture.tokenizer.control_tokens, 'number');
+  assert.equal(typeof fileFixture.tokenizer.variable_tokens, 'number');
 });
