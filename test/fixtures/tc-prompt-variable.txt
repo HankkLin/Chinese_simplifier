@@ -1,1 +1,1 @@
-Fix error handling for `parseUser()`. Run npm test. Preserve src/utils/user-parser.ts --runInBand.
+Fix `parseUser()` error handling: when input lacks email/name/role, return a consistent error so the front-end can render validation. Preserve src/utils/user-parser.ts public interface, do not rename test files, run `npm test -- --runInBand`, report minimum-necessary changes.

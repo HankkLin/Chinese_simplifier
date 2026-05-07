@@ -20,6 +20,11 @@ test('CJK detection separates English, TC-heavy, and mixed input', () => {
   assert.ok(getCjkRatio('請修正 parseUser()') > 0.15);
 });
 
+test('shouldOptimizeText rejects Japanese kana so kanji files are not translated', () => {
+  const japanese = 'ユーザーの入力を検証する関数 parseUser() のエラー処理を修正してください';
+  assert.equal(shouldOptimizeText(japanese), false);
+});
+
 test('protected translation preserves code spans, paths, flags, and identifiers', async () => {
   const input = [
     '請修正 `parseUser()`，不要改 src/utils/user-parser.ts。',
@@ -171,9 +176,9 @@ test('PostToolUse restore blocks stale originals before overwriting', async () =
   }
 });
 
-test('token experiment records control and variable groups with 30 percent minimum reduction', async () => {
+test('token experiment meets tokenizer-measured reduction threshold for every fixture', async () => {
   const results = await runTokenExperiment({ writeResults: false });
-  assert.equal(results.every((row) => row.proxy.percent_reduction >= row.minimum_proxy_reduction), true);
+  assert.equal(results.every((row) => row.tokenizer.percent_reduction >= row.minimum_reduction), true);
   assert.equal(results.some((row) => row.fixture_name === 'tc-prompt'), true);
   assert.equal(results.some((row) => row.fixture_name === 'verbose-response'), true);
 });

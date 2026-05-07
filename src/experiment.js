@@ -10,7 +10,7 @@ const inlineFixtures = [
   {
     fixture_name: 'tc-prompt',
     fixture_source: 'inline',
-    minimum_proxy_reduction: 0,
+    minimum_reduction: 30,
     transformation_type: 'protected prompt optimization',
     control: '請修正 `parseUser()` 的錯誤處理流程。當輸入資料缺少 email、name 或 role 欄位時，目前函式會傳回不一致的錯誤訊息，導致前端表單無法正確顯示驗證結果。請保留 src/utils/user-parser.ts 的公開介面，不要改變測試檔案名稱，最後執行 npm test -- --runInBand 並回報最小必要變更。',
     variable: optimizeChinesePrompt('請修正 `parseUser()` 的錯誤處理流程。當輸入資料缺少 email、name 或 role 欄位時，目前函式會傳回不一致的錯誤訊息，導致前端表單無法正確顯示驗證結果。請保留 src/utils/user-parser.ts 的公開介面，不要改變測試檔案名稱，最後執行 npm test -- --runInBand 並回報最小必要變更。')
@@ -18,7 +18,7 @@ const inlineFixtures = [
   {
     fixture_name: 'tc-source',
     fixture_source: 'inline',
-    minimum_proxy_reduction: 30,
+    minimum_reduction: 30,
     transformation_type: 'shadow file comment compaction',
     control: [
       '// 這個函式負責驗證使用者輸入，並且在資料缺漏時回傳一致的錯誤格式。',
@@ -42,7 +42,7 @@ const inlineFixtures = [
   {
     fixture_name: 'verbose-trace',
     fixture_source: 'inline',
-    minimum_proxy_reduction: 30,
+    minimum_reduction: 30,
     transformation_type: 'trace compaction',
     control: [
       'TypeError: Cannot read properties of undefined (reading map)',
@@ -68,7 +68,7 @@ const inlineFixtures = [
   {
     fixture_name: 'verbose-response',
     fixture_source: 'inline',
-    minimum_proxy_reduction: 30,
+    minimum_reduction: 30,
     transformation_type: 'SKILL.md caveman response',
     control: '我已經完成了你要求的修改。這次我先檢查了相關檔案，確認錯誤處理流程在缺少必要欄位時會回傳不一致的錯誤物件。接著我調整了 parseUser 的驗證順序，讓 email、name 和 role 都使用同一種錯誤格式。最後我執行了測試，確認所有案例都通過。以下是變更摘要與後續建議。',
     variable: 'STATUS: DONE\nCHANGES: src/utils/user-parser.ts\nNEXT: npm test passed\nERRORS: none'
@@ -100,7 +100,7 @@ async function loadFileFixture(pair) {
     fixture_name: pair.fixture_name,
     fixture_source: pair.controlPath.replaceAll('\\', '/'),
     transformation_type: pair.transformation_type,
-    minimum_proxy_reduction: pair.minimum_proxy_reduction ?? 30,
+    minimum_reduction: pair.minimum_reduction ?? 30,
     control,
     variable
   };
@@ -127,13 +127,16 @@ export async function runTokenExperiment(options = {}) {
   for (const fixture of await getFixtures()) {
     const control = await countTokenMetrics(fixture.control);
     const variable = await countTokenMetrics(fixture.variable);
+    const proxy = summarizePair(control.proxy, variable.proxy);
+    const tokenizer = summarizePair(control.tokenizer, variable.tokenizer);
     rows.push({
       fixture_name: fixture.fixture_name,
       fixture_source: fixture.fixture_source,
       transformation_type: fixture.transformation_type,
-      minimum_proxy_reduction: fixture.minimum_proxy_reduction,
-      proxy: summarizePair(control.proxy, variable.proxy),
-      tokenizer: summarizePair(control.tokenizer, variable.tokenizer)
+      minimum_reduction: fixture.minimum_reduction,
+      proxy,
+      tokenizer,
+      gap_percentage_points: Number(Math.abs(proxy.percent_reduction - tokenizer.percent_reduction).toFixed(2))
     });
   }
 
@@ -145,13 +148,13 @@ export async function runTokenExperiment(options = {}) {
 
 export function resultsToMarkdown(rows, date = new Date().toISOString().slice(0, 10)) {
   const lines = [
-    `Measured on ${date}. Proxy counts are deterministic local estimates; tokenizer counts use js-tiktoken when available and otherwise say proxy-fallback.`,
+    `Measured on ${date}. Tokenizer counts use js-tiktoken (cl100k_base) and are the source of truth; proxy counts are a fair char-weighted estimate for offline runs.`,
     '',
-    '| Fixture | Source | Transformation | Proxy control | Proxy variable | Proxy saved | Proxy reduction | Proxy minimum | Tokenizer method | Tokenizer control | Tokenizer variable | Tokenizer saved | Tokenizer reduction |',
-    '|---|---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|'
+    '| Fixture | Source | Transformation | Proxy control | Proxy variable | Proxy reduction | Tokenizer method | Tokenizer control | Tokenizer variable | Tokenizer reduction | Gap (pp) | Threshold |',
+    '|---|---|---|---:|---:|---:|---|---:|---:|---:|---:|---:|'
   ];
   for (const row of rows) {
-    lines.push(`| ${row.fixture_name} | ${row.fixture_source} | ${row.transformation_type} | ${row.proxy.control_tokens} | ${row.proxy.variable_tokens} | ${row.proxy.tokens_saved} | ${row.proxy.percent_reduction}% | ${row.minimum_proxy_reduction}% | ${row.tokenizer.method} | ${row.tokenizer.control_tokens} | ${row.tokenizer.variable_tokens} | ${row.tokenizer.tokens_saved} | ${row.tokenizer.percent_reduction}% |`);
+    lines.push(`| ${row.fixture_name} | ${row.fixture_source} | ${row.transformation_type} | ${row.proxy.control_tokens} | ${row.proxy.variable_tokens} | ${row.proxy.percent_reduction}% | ${row.tokenizer.method} | ${row.tokenizer.control_tokens} | ${row.tokenizer.variable_tokens} | ${row.tokenizer.percent_reduction}% | ${row.gap_percentage_points} | ${row.minimum_reduction}% |`);
   }
   return `${lines.join('\n')}\n`;
 }
