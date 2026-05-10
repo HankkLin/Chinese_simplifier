@@ -8,45 +8,53 @@ The architectural reason for the wrapper (full notes in [docs/TC_TOKEN_OPTIMIZER
 
 The wrapper's prompt optimizer is **lossy** — see "Limits" below before relying on it for prompts that need verbatim preservation.
 
-## Quick Start
+## Install
+
+This repo is a Claude Code plugin. Drop it under `~/.claude/plugins/` (or symlink it there) and Claude Code auto-loads the skill and hooks.
 
 ```bash
+git clone https://github.com/HankkLin/Chinese_simplifier.git ~/.claude/plugins/tc-token-optimizer
+cd ~/.claude/plugins/tc-token-optimizer
 npm install
 npm test
-npm run measure:tokens
 ```
 
-Use the wrapper directly:
+That's it — `skills/tc-token-optimizer/SKILL.md` becomes available as a skill, and `hooks/hooks.json` wires the shadow-read, trace-compaction, and pre-compact hooks via `${CLAUDE_PLUGIN_ROOT}` (no path editing required).
+
+### Optional: install the CLI wrapper
+
+The wrapper rewrites Traditional-Chinese prompts before the `claude` binary sees them. It is **lossy** — see "Limits" below before relying on it for prompts that need verbatim preservation.
 
 ```bash
-npx tc-claude "請修正 `parseUser()` 的錯誤處理流程"
-```
-
-Or install the shell alias:
-
-```bash
+# macOS / Linux
 bash wrapper/install.sh
+
+# Windows (PowerShell)
+pwsh wrapper/install.ps1
+```
+
+Or invoke it directly without an alias:
+
+```bash
+node wrapper/tc-claude.js "請修正 `parseUser()` 的錯誤處理流程"
 ```
 
 If the alias would recurse into itself, point the wrapper at the real Claude binary:
 
 ```bash
-export TC_CLAUDE_REAL_BIN=/absolute/path/to/claude
+export TC_CLAUDE_REAL_BIN=/absolute/path/to/claude   # Bash
+$env:TC_CLAUDE_REAL_BIN = "C:\path\to\claude.exe"    # PowerShell
 ```
 
-## Setup Tiers
+## How it works (three tiers)
 
-| Tier | Component | Setup | Purpose |
-|---|---|---:|---|
-| 1 | `SKILL.md` | Copy into agent skills | Enforce concise English-first reasoning and compact output. |
-| 2 | `hooks/*.js` | Copy `.claude/settings.json.example` and update paths | Shadow TC-heavy reads, compact traces, preserve compact session state. |
-| 3 | `wrapper/tc-claude.js` | Use `tc-claude` or shell alias | Optimize TC prompts before Claude Code receives them. |
+| Tier | Component | Purpose |
+|---|---|---|
+| 1 | `skills/tc-token-optimizer/SKILL.md` | Enforce concise English-first reasoning and a four-line output schema. |
+| 2 | `hooks/*.js` (wired via `hooks/hooks.json`) | Shadow TC-heavy reads, compact stack traces, preserve compact session state across `PreCompact`. |
+| 3 | `wrapper/tc-claude.js` | Optimize TC prompts before Claude Code receives them. |
 
-## Claude Hook Configuration
-
-Copy `.claude/settings.json.example` into your Claude Code settings and replace `/path/to/tc-token-optimizer` with this repository path.
-
-The MVP hook behavior is intentionally conservative:
+Hook behavior (intentionally conservative for the MVP):
 
 - `PreToolUse` on `Read` creates an OS-temp shadow file for TC-heavy files.
 - `PostToolUse --mode=trace` compacts JS, Python, and Java-like traces.
@@ -55,8 +63,6 @@ The MVP hook behavior is intentionally conservative:
 
 ## Experimental Token Test
 
-Run:
-
 ```bash
 npm run measure:tokens
 ```
@@ -64,7 +70,7 @@ npm run measure:tokens
 Method:
 
 - **Tokenizer-of-record:** `js-tiktoken` with the `cl100k_base` encoding. The script fails closed if the library is unavailable.
-- The control group is the raw Traditional-Chinese prompt, source file, trace, or response. The variable group is the optimized version produced by the wrapper, source-shadow compactor, trace compactor, or `SKILL.md` schema.
+- The control group is the raw Traditional-Chinese prompt, source file, trace, or response. The variable group is the optimized version produced by the wrapper, source-shadow compactor, trace compactor, or the SKILL.md schema.
 - A fair char-weighted **proxy** in `src/tokenizer.js` is reported alongside the tokenizer for offline runs. The build fails if the proxy and tokenizer percentages diverge by more than 8 percentage points on any fixture, so the proxy stays honest.
 - A fixture pair is valid only if every constraint in the control prompt also appears in the variable prompt. `npm run audit:fixtures` enforces this.
 - Passing threshold: at least 30% fewer **tokenizer-measured** tokens on every fixture.

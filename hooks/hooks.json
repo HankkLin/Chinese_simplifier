@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /path/to/tc-token-optimizer/hooks/pre-tool-use.js"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pre-tool-use.js"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /path/to/tc-token-optimizer/hooks/post-tool-use.js --mode=trace"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use.js --mode=trace"
           }
         ]
       },
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /path/to/tc-token-optimizer/hooks/post-tool-use.js --mode=restore"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use.js --mode=restore"
           }
         ]
       }
@@ -36,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /path/to/tc-token-optimizer/hooks/pre-compact.js"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pre-compact.js"
           }
         ]
       }

@@ -6,67 +6,64 @@ TC Token Optimizer 是一个可本地使用的 MVP，目标是降低中文开发
 
 本项目的来源指南与 handoff 文档说明了为什么需要 wrapper：Claude Code hooks 可以通过 `updatedInput` 修改工具输入，但 `UserPromptSubmit` 目前不能在提示词进入 context 前改写用户 prompt。因此，prompt 优化必须在 `claude` binary 收到 prompt 之前完成。
 
-## 快速开始
+## 安装
+
+本项目是 Claude Code plugin。把它 clone 到 `~/.claude/plugins/`（或建立 symlink），Claude Code 会自动加载 skill 与 hooks。
 
 ```bash
+git clone https://github.com/HankkLin/Chinese_simplifier.git ~/.claude/plugins/tc-token-optimizer
+cd ~/.claude/plugins/tc-token-optimizer
 npm install
 npm test
-npm run measure:tokens
 ```
 
-直接使用 wrapper：
+完成。`skills/tc-token-optimizer/SKILL.md` 会被当作 skill 加载；`hooks/hooks.json` 通过 `${CLAUDE_PLUGIN_ROOT}` 自动串接 shadow-read、trace 压缩与 pre-compact hooks（不需要修改任何路径）。
+
+### 可选：安装 CLI wrapper
+
+Wrapper 会在 `claude` binary 收到提示前，先改写繁体中文 prompt。它是**有损**的——若你的 prompt 必须逐字保留，请见下方"限制"。
 
 ```bash
-npx tc-claude "请修正 `parseUser()` 的错误处理流程"
-```
-
-或安装 shell alias：
-
-```bash
+# macOS / Linux
 bash wrapper/install.sh
+
+# Windows (PowerShell)
+pwsh wrapper/install.ps1
 ```
 
-如果 alias 造成递归调用，请指定真正的 Claude binary：
+或直接调用，不安装 alias：
 
 ```bash
-export TC_CLAUDE_REAL_BIN=/absolute/path/to/claude
+node wrapper/tc-claude.js "请修正 `parseUser()` 的错误处理流程"
 ```
 
-## 安装层级
+若 alias 造成递归调用，请指定真正的 Claude binary：
 
-| 层级 | 组件 | 设置方式 | 目的 |
-|---|---|---:|---|
-| 1 | `SKILL.md` | 复制到 agent skills | 强制精简输出、英文优先推理、降低回复 token。 |
-| 2 | `hooks/*.js` | 复制 `.claude/settings.json.example` 并更新路径 | 对中文重度文件建立 shadow read、压缩 trace、保留精简 session state。 |
-| 3 | `wrapper/tc-claude.js` | 使用 `tc-claude` 或 shell alias | 在 Claude Code 收到中文 prompt 前先做优化。 |
+```bash
+export TC_CLAUDE_REAL_BIN=/absolute/path/to/claude   # Bash
+$env:TC_CLAUDE_REAL_BIN = "C:\path\to\claude.exe"    # PowerShell
+```
 
-## Claude Hook 设置
+## 工作原理（三个层级）
 
-将 `.claude/settings.json.example` 复制到你的 Claude Code 设置，并把 `/path/to/tc-token-optimizer` 改成本项目路径。
+| 层级 | 组件 | 目的 |
+|---|---|---|
+| 1 | `skills/tc-token-optimizer/SKILL.md` | 强制精简输出、英文优先推理、四行输出 schema。 |
+| 2 | `hooks/*.js`（通过 `hooks/hooks.json` 串接） | 对繁中重度文件建立 shadow read、压缩 trace、`PreCompact` 时保留精简 session state。 |
+| 3 | `wrapper/tc-claude.js` | 在 Claude Code 收到繁中 prompt 前先做优化。 |
 
-MVP 的 hook 行为刻意保守：
+MVP hook 行为刻意保守：
 
-- `PreToolUse` 的 `Read` 会针对中文重度文件建立 OS temp shadow file。
+- `PreToolUse` 的 `Read` 会针对繁中重度文件建立 OS temp shadow file。
 - `PostToolUse --mode=trace` 会压缩 JS、Python、Java 类型的 trace。
-- `PostToolUse --mode=restore` 在没有安全还原 metadata 时会 fail closed，避免覆盖原始中文注释。
+- `PostToolUse --mode=restore` 在没有安全还原 metadata 时 fail closed，避免覆写原始繁中注释。
 - `PreCompact` 只会根据 payload 中实际存在的字段输出精简 `additionalContext`。
 
 ## Token 实验
 
-执行：
-
 ```bash
 npm run measure:tokens
 ```
-
-方法：
-
-- 控制组使用原始繁中 prompt、繁中注释较多的 source、冗长 trace、冗长 assistant 回复。
-- 变量组使用 wrapper prompt optimizer、shadow-file comment compaction、trace compaction、`SKILL.md` caveman output。
-- 实验使用 `src/tokenizer.js` 中的本地 deterministic proxy tokenizer。
-- 每个 fixture 都必须至少减少 30% measured tokens 才算通过。
-
-这些是为了可复现性而设计的 proxy measurements。它们证明本项目测试 harness 中的相对压缩效果，不代表精确的 Claude Code 账单或 Anthropic tokenizer 计数。
 
 ## 最新记录结果
 

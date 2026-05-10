@@ -6,6 +6,16 @@
 
 ---
 
+> **Update (2026-05-10):** This document captures the original design. The repo has since been restructured as a Claude Code plugin:
+> - `SKILL.md` → `skills/tc-token-optimizer/SKILL.md`
+> - `reference/*.pdf` → `skills/tc-token-optimizer/references/`
+> - `.claude/settings.json.example` → replaced by `hooks/hooks.json` (auto-wired via `${CLAUDE_PLUGIN_ROOT}`)
+> - Plugin metadata lives at `.claude-plugin/plugin.json`
+>
+> Where the "Repository Target Structure" section below shows the older tree, the current canonical layout is the one described in `README.md`.
+
+---
+
 ## Problem Statement
 
 Traditional Chinese (TC) developers using LLM coding agents (Claude Code, Codex CLI, Gemini CLI) face a 2–3× token penalty compared to English speakers. This happens because:
