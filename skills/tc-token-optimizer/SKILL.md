@@ -1,6 +1,6 @@
 ---
 name: tc-token-optimizer
-description: Compact, English-first reasoning for Traditional-Chinese coding workflows. Use when (a) the user's prompt contains Traditional Chinese, (b) a stack trace or source file under review contains TC, or (c) the user explicitly asks for short, compact, or low-token responses. SKILL.md alone enforces compact output; full prompt and source-file optimization additionally require the project's Claude Code hooks and the `tc-claude` CLI wrapper.
+description: Compact, English-first reasoning for Traditional-Chinese coding workflows. Use when (a) the user's prompt contains Traditional Chinese, (b) a stack trace or source file under review contains TC, or (c) the user explicitly asks for compact responses in a Traditional-Chinese coding context. SKILL.md alone enforces compact output; full prompt and source-file optimization additionally require the project's Claude Code hooks and the `tc-claude` CLI wrapper.
 ---
 
 # TC Token Optimizer
@@ -57,6 +57,7 @@ ERRORS: none
 - **Verbatim-preservation tasks.** `optimizeChinesePrompt` is a *lossy* summariser — it discards anything outside its hint table. For legal text, contracts, or any prompt where every word matters, bypass the wrapper and prompt Claude Code directly.
 - **TC output requested.** If the user wants Traditional-Chinese output, switch off the English-only rule for this turn and respond in TC.
 - **Exploratory dialogue.** When the user is brainstorming or asking for an explanation, the four-line schema is too terse — confirm the user wants compact mode before applying it.
+- **Mixed fix + explain requests.** When the user asks for code changes AND an explanation in the same message (e.g., `修一下 X，順便解釋為什麼`), produce the four-line schema for the fix, then add a bounded explanation block of ≤5 bullets — do not silently drop the explanation request.
 
 ## What this skill does NOT do alone
 
