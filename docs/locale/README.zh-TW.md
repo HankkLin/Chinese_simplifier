@@ -67,14 +67,16 @@ npm run measure:tokens
 
 ## 最新紀錄結果
 
-測量日期：2026-05-01，使用本機 proxy token counting。
+測量日期：2026-05-07，使用 `js-tiktoken`（`cl100k_base`）。
 
-| Fixture | Transformation | Control tokens | Variable tokens | Tokens saved | Reduction |
-|---|---:|---:|---:|---:|---:|
-| tc-prompt | protected prompt optimization | 214 | 26 | 188 | 87.85% |
-| tc-source | shadow file comment compaction | 247 | 74 | 173 | 70.04% |
-| verbose-trace | trace compaction | 109 | 43 | 66 | 60.55% |
-| verbose-response | SKILL.md caveman response | 237 | 21 | 216 | 91.14% |
+| Fixture | Transformation | 分詞器控制組 | 分詞器變數組 | 分詞器降幅 | Proxy 降幅 | 落差 (pp) |
+|---|---|---:|---:|---:|---:|---:|
+| tc-prompt | protected prompt optimization | 151 | 50 | 66.89% | 67.24% | 0.35 |
+| tc-source | shadow file comment compaction | 180 | 62 | 65.56% | 66.67% | 1.11 |
+| verbose-trace | trace compaction | 134 | 51 | 61.94% | 61.60% | 0.34 |
+| verbose-response | `SKILL.md` schema response | 153 | 23 | 84.97% | 88.66% | 3.69 |
+| fixture-file-tc-prompt (audited) | protected prompt optimization | 151 | 59 | 60.93% | 57.14% | 3.79 |
+| fixture-file-tc-source | shadow file comment compaction | 193 | 75 | 61.14% | 62.73% | 1.59 |
 
 產生的結果檔案：
 
