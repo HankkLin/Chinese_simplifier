@@ -48,14 +48,24 @@ export function buildClaudeInvocation(args, env = process.env, platform = proces
   };
 }
 
+function looksLikeFileReference(value) {
+  return /^[./\\]|[\\/]/.test(value) || /\.[A-Za-z0-9]{1,8}$/.test(value);
+}
+
+function lastPositionalIndex(args) {
+  for (let i = args.length - 1; i >= 0; i -= 1) {
+    if (args[i].startsWith('-')) continue;
+    if (looksLikeFileReference(args[i])) continue;
+    return i;
+  }
+  return -1;
+}
+
 export async function optimizeArgs(args) {
-  const optimized = [];
-  for (const arg of args) {
-    if (arg.startsWith('-')) {
-      optimized.push(arg);
-    } else {
-      optimized.push(await optimizePromptArgument(arg));
-    }
+  const promptIndex = lastPositionalIndex(args);
+  const optimized = args.slice();
+  if (promptIndex >= 0) {
+    optimized[promptIndex] = await optimizePromptArgument(args[promptIndex]);
   }
   return optimized;
 }

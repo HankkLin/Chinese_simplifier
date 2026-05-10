@@ -1,6 +1,6 @@
 # TC Token Optimizer
 
-[English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
+[English](../../README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
 
 TC Token Optimizer 是一個可本機使用的 MVP，目標是降低繁體中文開發者在 coding agent 工作流程中的 token 開銷。它包含精簡輸出的 agent skill、Claude Code hooks、CLI wrapper，以及可重現的 token 節省實驗。
 

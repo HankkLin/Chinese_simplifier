@@ -1,10 +1,10 @@
-Measured on 2026-05-05. Proxy counts are deterministic local estimates; tokenizer counts use js-tiktoken when available and otherwise say proxy-fallback.
+Measured on 2026-05-07. Tokenizer counts use js-tiktoken (cl100k_base) and are the source of truth; proxy counts are a fair char-weighted estimate for offline runs.
 
-| Fixture | Source | Transformation | Proxy control | Proxy variable | Proxy saved | Proxy reduction | Proxy minimum | Tokenizer method | Tokenizer control | Tokenizer variable | Tokenizer saved | Tokenizer reduction |
-|---|---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
-| tc-prompt | inline | protected prompt optimization | 214 | 53 | 161 | 75.23% | 0% | js-tiktoken | 151 | 50 | 101 | 66.89% |
-| tc-source | inline | shadow file comment compaction | 247 | 64 | 183 | 74.09% | 30% | js-tiktoken | 180 | 62 | 118 | 65.56% |
-| verbose-trace | inline | trace compaction | 109 | 43 | 66 | 60.55% | 30% | js-tiktoken | 134 | 51 | 83 | 61.94% |
-| verbose-response | inline | SKILL.md caveman response | 237 | 21 | 216 | 91.14% | 30% | js-tiktoken | 153 | 23 | 130 | 84.97% |
-| fixture-file-tc-prompt | test/fixtures/tc-prompt-control.txt | protected prompt optimization | 214 | 25 | 189 | 88.32% | 30% | js-tiktoken | 151 | 24 | 127 | 84.11% |
-| fixture-file-tc-source | test/fixtures/sample-tc-file.ts | shadow file comment compaction | 260 | 77 | 183 | 70.38% | 30% | js-tiktoken | 193 | 75 | 118 | 61.14% |
+| Fixture | Source | Transformation | Proxy control | Proxy variable | Proxy reduction | Tokenizer method | Tokenizer control | Tokenizer variable | Tokenizer reduction | Gap (pp) | Threshold |
+|---|---|---|---:|---:|---:|---|---:|---:|---:|---:|---:|
+| tc-prompt | inline | protected prompt optimization | 174 | 57 | 67.24% | js-tiktoken | 151 | 50 | 66.89% | 0.35 | 30% |
+| tc-source | inline | shadow file comment compaction | 204 | 68 | 66.67% | js-tiktoken | 180 | 62 | 65.56% | 1.11 | 30% |
+| verbose-trace | inline | trace compaction | 125 | 48 | 61.6% | js-tiktoken | 134 | 51 | 61.94% | 0.34 | 30% |
+| verbose-response | inline | SKILL.md caveman response | 194 | 22 | 88.66% | js-tiktoken | 153 | 23 | 84.97% | 3.69 | 30% |
+| fixture-file-tc-prompt | test/fixtures/tc-prompt-control.txt | protected prompt optimization | 175 | 75 | 57.14% | js-tiktoken | 151 | 59 | 60.93% | 3.79 | 30% |
+| fixture-file-tc-source | test/fixtures/sample-tc-file.ts | shadow file comment compaction | 220 | 82 | 62.73% | js-tiktoken | 193 | 75 | 61.14% | 1.59 | 30% |

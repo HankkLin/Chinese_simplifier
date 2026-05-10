@@ -1,42 +1,23 @@
-import { shouldOptimizeText } from './cjk.js';
+import { shouldOptimizeText, shouldTranslateTraditional } from './cjk.js';
 import { protectText, restoreProtectedText } from './protect.js';
 
 const TC_TO_SC = new Map(Object.entries({
   請: '请',
-  修: '修',
-  正: '正',
   這: '这',
   個: '个',
-  函: '函',
-  式: '式',
   錯: '错',
   誤: '误',
   處: '处',
-  理: '理',
-  流: '流',
-  程: '程',
-  不: '不',
-  要: '要',
-  改: '改',
   執: '执',
-  行: '行',
   驗: '验',
   證: '证',
-  使: '使',
-  用: '用',
-  者: '者',
   輸: '输',
-  入: '入',
   狀: '状',
   態: '态',
   檔: '档',
-  案: '案',
   註: '注',
-  解: '解',
   資: '资',
-  料: '料',
   傳: '传',
-  回: '回',
   應: '应',
   預: '预',
   設: '设',
@@ -49,59 +30,32 @@ const TC_TO_SC = new Map(Object.entries({
   確: '确',
   認: '认',
   變: '变',
-  更: '更',
   後: '后',
   測: '测',
   試: '试',
   錄: '录',
   將: '将',
   導: '导',
-  致: '致',
   嚴: '严',
-  重: '重',
   問: '问',
   題: '题',
   當: '当',
-  前: '前',
   負: '负',
   責: '责',
   並: '并',
-  缺: '缺',
   漏: '漏',
   時: '时',
   統: '统',
   線: '线',
   欄: '栏',
-  位: '位',
   電: '电',
   郵: '邮',
-  件: '件',
   顯: '显',
-  示: '示',
   體: '体',
-  中: '中',
-  文: '文',
-  提: '提',
-  維: '维',
-  注: '注',
-  意: '意',
-  事: '事',
   項: '项',
-  直: '直',
-  接: '接',
   拋: '抛',
-  例: '例',
-  外: '外',
-  因: '因',
   為: '为',
-  呼: '呼',
-  叫: '叫',
-  端: '端',
-  需: '需',
-  穩: '稳',
-  定: '定',
-  物: '物',
-  缺: '缺'
+  穩: '稳'
 }));
 
 async function openccTranslate(text) {
@@ -123,7 +77,7 @@ async function openccTranslate(text) {
 export async function translateWithProtection(text, options = {}) {
   const value = String(text ?? '');
   const threshold = options.threshold ?? 0.15;
-  if (!shouldOptimizeText(value, threshold)) return value;
+  if (!shouldTranslateTraditional(value, threshold)) return value;
 
   const { protectedText, values } = protectText(value);
   const translated = await openccTranslate(protectedText);
@@ -203,7 +157,7 @@ function summarizePromptIntent(originalText, protectedText, values, references) 
   const value = String(originalText);
   const lower = value.toLowerCase();
 
-  if (/修正|錯誤|錯誤處理|bug|fix|error|exception|骭ｯ|險､|陌慕炊/u.test(value)) {
+  if (/修正|錯誤|錯誤處理|错误|错误处理|例外|異常|异常|bug|fix|error|exception/u.test(value)) {
     hints.push('fix error handling');
   } else if (/新增|加入|implement|add/u.test(value)) {
     hints.push('implement requested change');
@@ -213,7 +167,7 @@ function summarizePromptIntent(originalText, protectedText, values, references) 
     hints.push('refactor requested code');
   }
 
-  if (/驗證|验证|validation|validate|email|name|role|form|表單|陦ｨ蝟ｮ/u.test(value)) {
+  if (/驗證|验证|validation|validate|email|name|role|form|表單|表单|欄位|栏位/u.test(value)) {
     const fields = ['email', 'name', 'role'].filter((field) => lower.includes(field));
     hints.push(fields.length ? `validate ${fields.join('/')}` : 'preserve validation behavior');
   }
@@ -248,7 +202,7 @@ function extractPromptIntent(protectedText, values) {
 }
 
 function hasIntentSignal(line) {
-  return /fix|repair|debug|change|update|add|implement|refactor|preserve|keep|test|verify|修|改|新增|加入|實作|处理|處理|錯|错|錯誤|错误|測試|测试|驗證|验证|保留|菫ｮ|豁｣|謾ｹ|譁ｰ|蜈･|蠑|隧ｦ|貂ｬ|遒ｺ/u.test(line);
+  return /fix|repair|debug|change|update|add|implement|refactor|preserve|keep|test|verify|修|改|新增|加入|實作|实作|处理|處理|錯|错|錯誤|错误|測試|测试|驗證|验证|保留|確認|确认|完成|complete/u.test(line);
 }
 
 function trimIntent(text, maxLength) {

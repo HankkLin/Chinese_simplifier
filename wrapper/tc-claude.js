@@ -3,6 +3,12 @@ import { spawn } from 'node:child_process';
 import { buildClaudeInvocation, optimizeArgs } from '../src/wrapper.js';
 
 const originalArgs = process.argv.slice(2);
+
+if (process.env.TC_CLAUDE_WRAPPED === '1') {
+  console.error('tc-claude: TC_CLAUDE_WRAPPED=1 detected — refusing to re-optimize. Set TC_CLAUDE_REAL_BIN to break the recursion.');
+  process.exit(2);
+}
+
 const args = await optimizeArgs(originalArgs);
 const invocation = buildClaudeInvocation(args);
 

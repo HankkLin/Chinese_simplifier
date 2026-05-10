@@ -9,7 +9,8 @@
   "scripts": {
     "test": "node test/token-optimizer.test.js && node test/wrapper.test.js",
     "measure:tokens": "node scripts/measure-token-savings.js",
-    "smoke": "npm test && npm run measure:tokens"
+    "audit:fixtures": "node scripts/audit-fixtures.js",
+    "smoke": "npm test && npm run audit:fixtures && npm run measure:tokens"
   },
   "keywords": [
     "claude-code",

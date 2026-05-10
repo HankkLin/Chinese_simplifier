@@ -3,13 +3,13 @@
     "fixture_name": "tc-prompt",
     "fixture_source": "inline",
     "transformation_type": "protected prompt optimization",
-    "minimum_proxy_reduction": 0,
+    "minimum_reduction": 30,
     "proxy": {
-      "method": "deterministic-proxy",
-      "control_tokens": 214,
-      "variable_tokens": 53,
-      "tokens_saved": 161,
-      "percent_reduction": 75.23
+      "method": "fair-proxy",
+      "control_tokens": 174,
+      "variable_tokens": 57,
+      "tokens_saved": 117,
+      "percent_reduction": 67.24
     },
     "tokenizer": {
       "method": "js-tiktoken",
@@ -17,19 +17,20 @@
       "variable_tokens": 50,
       "tokens_saved": 101,
       "percent_reduction": 66.89
-    }
+    },
+    "gap_percentage_points": 0.35
   },
   {
     "fixture_name": "tc-source",
     "fixture_source": "inline",
     "transformation_type": "shadow file comment compaction",
-    "minimum_proxy_reduction": 30,
+    "minimum_reduction": 30,
     "proxy": {
-      "method": "deterministic-proxy",
-      "control_tokens": 247,
-      "variable_tokens": 64,
-      "tokens_saved": 183,
-      "percent_reduction": 74.09
+      "method": "fair-proxy",
+      "control_tokens": 204,
+      "variable_tokens": 68,
+      "tokens_saved": 136,
+      "percent_reduction": 66.67
     },
     "tokenizer": {
       "method": "js-tiktoken",
@@ -37,19 +38,20 @@
       "variable_tokens": 62,
       "tokens_saved": 118,
       "percent_reduction": 65.56
-    }
+    },
+    "gap_percentage_points": 1.11
   },
   {
     "fixture_name": "verbose-trace",
     "fixture_source": "inline",
     "transformation_type": "trace compaction",
-    "minimum_proxy_reduction": 30,
+    "minimum_reduction": 30,
     "proxy": {
-      "method": "deterministic-proxy",
-      "control_tokens": 109,
-      "variable_tokens": 43,
-      "tokens_saved": 66,
-      "percent_reduction": 60.55
+      "method": "fair-proxy",
+      "control_tokens": 125,
+      "variable_tokens": 48,
+      "tokens_saved": 77,
+      "percent_reduction": 61.6
     },
     "tokenizer": {
       "method": "js-tiktoken",
@@ -57,19 +59,20 @@
       "variable_tokens": 51,
       "tokens_saved": 83,
       "percent_reduction": 61.94
-    }
+    },
+    "gap_percentage_points": 0.34
   },
   {
     "fixture_name": "verbose-response",
     "fixture_source": "inline",
     "transformation_type": "SKILL.md caveman response",
-    "minimum_proxy_reduction": 30,
+    "minimum_reduction": 30,
     "proxy": {
-      "method": "deterministic-proxy",
-      "control_tokens": 237,
-      "variable_tokens": 21,
-      "tokens_saved": 216,
-      "percent_reduction": 91.14
+      "method": "fair-proxy",
+      "control_tokens": 194,
+      "variable_tokens": 22,
+      "tokens_saved": 172,
+      "percent_reduction": 88.66
     },
     "tokenizer": {
       "method": "js-tiktoken",
@@ -77,39 +80,41 @@
       "variable_tokens": 23,
       "tokens_saved": 130,
       "percent_reduction": 84.97
-    }
+    },
+    "gap_percentage_points": 3.69
   },
   {
     "fixture_name": "fixture-file-tc-prompt",
     "fixture_source": "test/fixtures/tc-prompt-control.txt",
     "transformation_type": "protected prompt optimization",
-    "minimum_proxy_reduction": 30,
+    "minimum_reduction": 30,
     "proxy": {
-      "method": "deterministic-proxy",
-      "control_tokens": 214,
-      "variable_tokens": 25,
-      "tokens_saved": 189,
-      "percent_reduction": 88.32
+      "method": "fair-proxy",
+      "control_tokens": 175,
+      "variable_tokens": 75,
+      "tokens_saved": 100,
+      "percent_reduction": 57.14
     },
     "tokenizer": {
       "method": "js-tiktoken",
       "control_tokens": 151,
-      "variable_tokens": 24,
-      "tokens_saved": 127,
-      "percent_reduction": 84.11
-    }
+      "variable_tokens": 59,
+      "tokens_saved": 92,
+      "percent_reduction": 60.93
+    },
+    "gap_percentage_points": 3.79
   },
   {
     "fixture_name": "fixture-file-tc-source",
     "fixture_source": "test/fixtures/sample-tc-file.ts",
     "transformation_type": "shadow file comment compaction",
-    "minimum_proxy_reduction": 30,
+    "minimum_reduction": 30,
     "proxy": {
-      "method": "deterministic-proxy",
-      "control_tokens": 260,
-      "variable_tokens": 77,
-      "tokens_saved": 183,
-      "percent_reduction": 70.38
+      "method": "fair-proxy",
+      "control_tokens": 220,
+      "variable_tokens": 82,
+      "tokens_saved": 138,
+      "percent_reduction": 62.73
     },
     "tokenizer": {
       "method": "js-tiktoken",
@@ -117,6 +122,7 @@
       "variable_tokens": 75,
       "tokens_saved": 118,
       "percent_reduction": 61.14
-    }
+    },
+    "gap_percentage_points": 1.59
   }
 ]

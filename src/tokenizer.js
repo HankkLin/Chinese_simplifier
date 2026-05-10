@@ -1,15 +1,17 @@
 import { CJK_GLOBAL_PATTERN } from './cjk.js';
 
-const TRADITIONAL_PATTERN = /[請這個錯誤處檔註資料傳應預設無與開發維護確認變後測試錄將導嚴問題當負責並時統線欄電郵顯體項拋為穩]/gu;
 let tokenizerPromise;
 
-function heuristicTokenCount(text) {
+// Fair character-weighted proxy: ~1.8 tokens per Han character (matches
+// cl100k_base for both Traditional and Simplified Chinese on average),
+// ~0.27 tokens per Latin character. Does NOT inflate TC vs SC — Han is
+// Han for tokenisation purposes.
+function fairProxyCount(text) {
   const value = String(text ?? '');
   const cjk = Array.from(value.matchAll(CJK_GLOBAL_PATTERN)).length;
-  const traditional = Array.from(value.matchAll(TRADITIONAL_PATTERN)).length;
-  const nonCjk = value.replace(CJK_GLOBAL_PATTERN, ' ');
-  const latin = nonCjk.trim() ? Math.ceil(nonCjk.trim().split(/\s+/).join(' ').length / 4) : 0;
-  return traditional * 3 + (cjk - traditional) * 2 + latin;
+  const nonCjk = value.replace(CJK_GLOBAL_PATTERN, '');
+  const latin = nonCjk.length;
+  return Math.ceil(cjk * 1.8 + latin * 0.27);
 }
 
 async function loadTokenizer() {
@@ -20,7 +22,7 @@ async function loadTokenizer() {
 }
 
 export function countProxyTokens(text) {
-  return heuristicTokenCount(text);
+  return fairProxyCount(text);
 }
 
 export async function countTokens(text) {
@@ -42,12 +44,23 @@ export async function countTokenizerTokens(text) {
   };
 }
 
+export async function countTokenizerTokensStrict(text) {
+  const tokenizer = await loadTokenizer();
+  if (!tokenizer) {
+    throw new Error('js-tiktoken unavailable; install dependency or use countTokenizerTokens for proxy fallback.');
+  }
+  return {
+    tokens: tokenizer.encode(String(text ?? '')).length,
+    method: 'js-tiktoken'
+  };
+}
+
 export async function countTokenMetrics(text) {
   const tokenizer = await countTokenizerTokens(text);
   return {
     proxy: {
       tokens: countProxyTokens(text),
-      method: 'deterministic-proxy'
+      method: 'fair-proxy'
     },
     tokenizer
   };
