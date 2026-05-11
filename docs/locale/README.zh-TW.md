@@ -8,18 +8,65 @@ TC Token Optimizer 是一個可本機使用的 MVP，目標是降低繁體中文
 
 ## 安裝
 
-本專案是 Claude Code plugin。把它 clone 到 `~/.claude/plugins/`（或建立 symlink），Claude Code 會自動載入 skill 與 hooks。
+依照你想要的範圍選擇一條路徑：
+
+| 路徑 | 取得內容 | 適合 |
+|---|---|---|
+| A. 只裝 skill | Tier 1（輸出契約） | 30 秒試用，不需 hooks/wrapper |
+| B. Marketplace 安裝 plugin | Tier 1 + 2 | **推薦** — 可用 `/plugin update` 自動更新 |
+| C. Git clone 安裝 plugin | Tier 1 + 2 | 離線使用 / 修改原始碼 |
+| D. 額外加裝 CLI wrapper | 在 B 或 C 之上加 Tier 3 | 在 Claude Code 收到 prompt 前先最佳化 |
+
+### A. 只裝 skill（最輕量）
+
+只複製 skill 資料夾；不需要 Node、不需要 hooks。
+
+```bash
+# macOS / Linux
+mkdir -p ~/.claude/skills
+cp -r skills/tc-token-optimizer ~/.claude/skills/
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force $HOME\.claude\skills | Out-Null
+Copy-Item -Recurse skills\tc-token-optimizer $HOME\.claude\skills\
+```
+
+重啟 Claude Code，skill 會以 `tc-token-optimizer` 出現在 `/skills` 列表。
+
+### B. Marketplace 安裝 plugin（推薦）
+
+本 repo 內含 `.claude-plugin/marketplace.json`，Claude Code 可直接從 GitHub 把它當作 plugin marketplace 載入，一次取得 skill 與 hooks（skill+hooks 不需要 `git clone`、不需要跑 `npm install`）。
+
+Claude Code 內：
+
+```text
+/plugin marketplace add HankkLin/Chinese_simplifier
+/plugin install tc-token-optimizer@chinese-simplifier
+```
+
+或從終端機（非互動模式）：
+
+```bash
+claude plugin marketplace add HankkLin/Chinese_simplifier
+claude plugin install tc-token-optimizer@chinese-simplifier
+```
+
+更新：`/plugin marketplace update chinese-simplifier` 重新整理目錄，然後 `/plugin update tc-token-optimizer@chinese-simplifier`。移除：`/plugin uninstall tc-token-optimizer@chinese-simplifier`。
+
+> Marketplace 名稱是 `chinese-simplifier`（kebab-case），plugin 名稱是 `tc-token-optimizer`。安裝指令中的 `@` 是 `plugin@marketplace` 的分隔符。
+
+### C. Git clone 安裝 plugin
 
 ```bash
 git clone https://github.com/HankkLin/Chinese_simplifier.git ~/.claude/plugins/tc-token-optimizer
 cd ~/.claude/plugins/tc-token-optimizer
-npm install
-npm test
+npm install   # 只有 hooks + wrapper 需要
+npm test      # 選用 — 驗證 hooks
 ```
 
-完成。`skills/tc-token-optimizer/SKILL.md` 會被當作 skill 載入；`hooks/hooks.json` 透過 `${CLAUDE_PLUGIN_ROOT}` 自動串接 shadow-read、trace 壓縮與 pre-compact hooks（不需要修改任何路徑）。
+Claude Code 會自動把 `skills/tc-token-optimizer/SKILL.md` 當作 skill 載入；`hooks/hooks.json` 透過 `${CLAUDE_PLUGIN_ROOT}` 串接 shadow-read、trace 壓縮與 pre-compact hooks（不需修改路徑）。
 
-### 選用：安裝 CLI wrapper
+### D. 選用：安裝 CLI wrapper
 
 Wrapper 會在 `claude` binary 收到提示前，先改寫繁體中文 prompt。它是**有損**的——若你的 prompt 必須逐字保留，請見下方「限制」。
 

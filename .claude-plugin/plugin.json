@@ -1,7 +1,6 @@
 {
   "name": "tc-token-optimizer",
   "description": "Compact, English-first reasoning for Traditional-Chinese coding workflows. Bundles the SKILL.md, hooks for shadow reads and trace compaction, and a CLI wrapper for prompt optimization before the claude binary receives it.",
-  "version": "1.0.0",
   "license": "MIT",
   "homepage": "https://github.com/HankkLin/Chinese_simplifier",
   "repository": "https://github.com/HankkLin/Chinese_simplifier",
