@@ -10,18 +10,65 @@ The wrapper's prompt optimizer is **lossy** — see "Limits" below before relyin
 
 ## Install
 
-This repo is a Claude Code plugin. Drop it under `~/.claude/plugins/` (or symlink it there) and Claude Code auto-loads the skill and hooks.
+Pick the path that matches what you want:
+
+| Path | What you get | Best for |
+|---|---|---|
+| A. Skill only | Tier 1 (output contract) | Try it in 30 seconds, no hooks/wrapper |
+| B. Plugin via marketplace | Tiers 1 + 2 | Recommended — auto-updates on `/plugin update` |
+| C. Plugin via git clone | Tiers 1 + 2 | Offline / hacking on the source |
+| D. Add CLI wrapper | Tier 3 on top of B or C | Optimize prompts before Claude Code sees them |
+
+### A. Skill only (lightest)
+
+Copy just the skill folder; no Node, no hooks.
+
+```bash
+# macOS / Linux
+mkdir -p ~/.claude/skills
+cp -r skills/tc-token-optimizer ~/.claude/skills/
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force $HOME\.claude\skills | Out-Null
+Copy-Item -Recurse skills\tc-token-optimizer $HOME\.claude\skills\
+```
+
+Restart Claude Code. The skill appears as `tc-token-optimizer` in `/skills`.
+
+### B. Plugin via marketplace (recommended)
+
+This repo ships a `.claude-plugin/marketplace.json`, so Claude Code can install it directly as a plugin from GitHub. You get the skill **and** the hooks (no `git clone`, no `npm install` step needed for the skill+hooks tier).
+
+Inside Claude Code:
+
+```text
+/plugin marketplace add HankkLin/Chinese_simplifier
+/plugin install tc-token-optimizer@chinese-simplifier
+```
+
+Or from your terminal (non-interactive):
+
+```bash
+claude plugin marketplace add HankkLin/Chinese_simplifier
+claude plugin install tc-token-optimizer@chinese-simplifier
+```
+
+Update later with `/plugin marketplace update chinese-simplifier` (refreshes the catalog), then `/plugin update tc-token-optimizer@chinese-simplifier`. Remove with `/plugin uninstall tc-token-optimizer@chinese-simplifier`.
+
+> The marketplace name is `chinese-simplifier` (kebab-case). The plugin name is `tc-token-optimizer`. The `@` separator in install commands is `plugin@marketplace`.
+
+### C. Plugin via git clone
 
 ```bash
 git clone https://github.com/HankkLin/Chinese_simplifier.git ~/.claude/plugins/tc-token-optimizer
 cd ~/.claude/plugins/tc-token-optimizer
-npm install
-npm test
+npm install   # only needed for hooks + wrapper
+npm test      # optional — verifies hooks
 ```
 
-That's it — `skills/tc-token-optimizer/SKILL.md` becomes available as a skill, and `hooks/hooks.json` wires the shadow-read, trace-compaction, and pre-compact hooks via `${CLAUDE_PLUGIN_ROOT}` (no path editing required).
+Claude Code auto-loads `skills/tc-token-optimizer/SKILL.md` as a skill, and `hooks/hooks.json` wires the shadow-read, trace-compaction, and pre-compact hooks via `${CLAUDE_PLUGIN_ROOT}` (no path editing required).
 
-### Optional: install the CLI wrapper
+### D. Optional: install the CLI wrapper
 
 The wrapper rewrites Traditional-Chinese prompts before the `claude` binary sees them. It is **lossy** — see "Limits" below before relying on it for prompts that need verbatim preservation.
 

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "chinese-simplifier",
+  "description": "TC Token Optimizer — compact, English-first reasoning for Traditional-Chinese coding workflows.",
+  "owner": {
+    "name": "HankkLin",
+    "email": "linhan317@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "tc-token-optimizer",
+      "source": "./",
+      "description": "Compact, English-first reasoning for Traditional-Chinese coding workflows. Bundles the SKILL.md, hooks for shadow reads and trace compaction, and a CLI wrapper for prompt optimization before the claude binary receives it.",
+      "homepage": "https://github.com/HankkLin/Chinese_simplifier",
+      "repository": "https://github.com/HankkLin/Chinese_simplifier",
+      "license": "MIT",
+      "keywords": [
+        "claude-code",
+        "codex",
+        "tokenization",
+        "traditional-chinese",
+        "coding-agents"
+      ],
+      "category": "productivity",
+      "tags": [
+        "traditional-chinese",
+        "token-optimization",
+        "skill",
+        "hooks",
+        "cli-wrapper"
+      ]
+    }
+  ]
+}
