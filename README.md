@@ -10,32 +10,16 @@ The wrapper's prompt optimizer is **lossy** — see "Limits" below before relyin
 
 ## Install
 
-Pick the path that matches what you want:
+The primary install path is the Claude Code marketplace — it pulls the skill and hooks directly from this repo and auto-updates via `/plugin update`. The other paths exist for stripped-down or offline use.
 
 | Path | What you get | Best for |
 |---|---|---|
-| A. Skill only | Tier 1 (output contract) | Try it in 30 seconds, no hooks/wrapper |
-| B. Plugin via marketplace | Tiers 1 + 2 | Recommended — auto-updates on `/plugin update` |
+| A. Plugin via marketplace | Tiers 1 + 2 | **Primary** — auto-updates on `/plugin update` |
+| B. Skill only | Tier 1 (output contract) | Try it in 30 seconds, no hooks/wrapper |
 | C. Plugin via git clone | Tiers 1 + 2 | Offline / hacking on the source |
-| D. Add CLI wrapper | Tier 3 on top of B or C | Optimize prompts before Claude Code sees them |
+| D. Add CLI wrapper | Tier 3 on top of A or C | Optimize prompts before Claude Code sees them |
 
-### A. Skill only (lightest)
-
-Copy just the skill folder; no Node, no hooks.
-
-```bash
-# macOS / Linux
-mkdir -p ~/.claude/skills
-cp -r skills/tc-token-optimizer ~/.claude/skills/
-
-# Windows (PowerShell)
-New-Item -ItemType Directory -Force $HOME\.claude\skills | Out-Null
-Copy-Item -Recurse skills\tc-token-optimizer $HOME\.claude\skills\
-```
-
-Restart Claude Code. The skill appears as `tc-token-optimizer` in `/skills`.
-
-### B. Plugin via marketplace (recommended)
+### A. Plugin via marketplace (primary)
 
 This repo ships a `.claude-plugin/marketplace.json`, so Claude Code can install it directly as a plugin from GitHub. You get the skill **and** the hooks (no `git clone`, no `npm install` step needed for the skill+hooks tier).
 
@@ -56,6 +40,22 @@ claude plugin install tc-token-optimizer@chinese-simplifier
 Update later with `/plugin marketplace update chinese-simplifier` (refreshes the catalog), then `/plugin update tc-token-optimizer@chinese-simplifier`. Remove with `/plugin uninstall tc-token-optimizer@chinese-simplifier`.
 
 > The marketplace name is `chinese-simplifier` (kebab-case). The plugin name is `tc-token-optimizer`. The `@` separator in install commands is `plugin@marketplace`.
+
+### B. Skill only (lightest)
+
+Copy just the skill folder; no Node, no hooks.
+
+```bash
+# macOS / Linux
+mkdir -p ~/.claude/skills
+cp -r skills/tc-token-optimizer ~/.claude/skills/
+
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force $HOME\.claude\skills | Out-Null
+Copy-Item -Recurse skills\tc-token-optimizer $HOME\.claude\skills\
+```
+
+Restart Claude Code. The skill appears as `tc-token-optimizer` in `/skills`.
 
 ### C. Plugin via git clone
 
