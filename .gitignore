@@ -6,3 +6,6 @@ Thumbs.db
 # Local runtime output
 tmp/
 *.log
+
+# Private handoff material — do not publish
+skills/tc-token-optimizer/references/Optimizing Chinese Tokenization for Coding Agents.pdf
