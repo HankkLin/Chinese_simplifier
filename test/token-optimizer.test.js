@@ -1,8 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { getCjkRatio, hasCjk, shouldOptimizeText } from '../src/cjk.js';
 import { translateWithProtection } from '../src/translate.js';
@@ -194,4 +198,24 @@ test('token experiment separates proxy and tokenizer-backed measurements', async
   assert.ok(['js-tiktoken', 'proxy-fallback'].includes(fileFixture.tokenizer.method));
   assert.equal(typeof fileFixture.tokenizer.control_tokens, 'number');
   assert.equal(typeof fileFixture.tokenizer.variable_tokens, 'number');
+});
+
+test('tc-mirror-minimal SKILL: SKILL.md exists', () => {
+  const skillPath = join(__dirname, '..', 'skills', 'tc-mirror-minimal', 'SKILL.md');
+  assert.equal(existsSync(skillPath), true);
+});
+
+test('tc-mirror-minimal SKILL: SKILL.md mandates language mirror', () => {
+  const skillPath = join(__dirname, '..', 'skills', 'tc-mirror-minimal', 'SKILL.md');
+  const body = readFileSync(skillPath, 'utf8');
+  assert.match(body, /Render the FINAL OUTPUT in the same language as the user/);
+  assert.match(body, /Field labels \(STATUS, CHANGES, NEXT, ERRORS\) remain English/);
+});
+
+test('tc-mirror-minimal SKILL: expected-output fixture is TC, not EN', () => {
+  const fixturePath = join(__dirname, 'fixtures', 'expected-outputs', 'tc-mirror-minimal', '01-bugfix.md');
+  const body = readFileSync(fixturePath, 'utf8');
+  const changesLine = body.split('\n').find((l) => l.startsWith('CHANGES:'));
+  assert.ok(changesLine, 'CHANGES: line missing from fixture');
+  assert.match(changesLine, /[一-鿿]/);
 });
