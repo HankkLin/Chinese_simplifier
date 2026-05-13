@@ -241,3 +241,23 @@ test('tc-mirror-glyphs SKILL: expected output uses glyphs not words', () => {
   assert.match(body, /✓|⊕|@/);
   assert.doesNotMatch(body, /完成|新增|在第/);
 });
+
+test('tc-mirror-classical SKILL: SKILL.md and style guide exist', () => {
+  const skillPath = new URL('../skills/tc-mirror-classical/SKILL.md', import.meta.url);
+  const guidePath = new URL('../skills/tc-mirror-classical/references/classical-style-guide.md', import.meta.url);
+  assert.equal(existsSync(skillPath), true);
+  assert.equal(existsSync(guidePath), true);
+});
+
+test('tc-mirror-classical SKILL: style guide forbids tense particles', () => {
+  const guidePath = new URL('../skills/tc-mirror-classical/references/classical-style-guide.md', import.meta.url);
+  const g = readFileSync(guidePath, 'utf8');
+  assert.match(g, /Drop tense particles.*了.*過.*著/);
+});
+
+test('tc-mirror-classical SKILL: expected output drops vernacular particles', () => {
+  const fixturePath = new URL('../test/fixtures/expected-outputs/tc-mirror-classical/01-bugfix.md', import.meta.url);
+  const body = readFileSync(fixturePath, 'utf8');
+  assert.doesNotMatch(body, /已經|沒有|了/);
+  assert.match(body, /已修|無|須/);
+});
