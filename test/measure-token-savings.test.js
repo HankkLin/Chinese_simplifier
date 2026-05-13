@@ -27,3 +27,15 @@ test('measure-token-savings v2 CSV exists and has header', () => {
   assert.ok(first.includes('variant_tokens'));
   assert.ok(first.includes('savings_pct'));
 });
+
+test('build-savings-xlsx produces a 4-sheet workbook', () => {
+  execSync('python scripts/build-savings-xlsx.py', { cwd: repoRoot, stdio: 'pipe' });
+  const xlsxPath = join(repoRoot, 'test/results/token-savings.xlsx');
+  assert.equal(existsSync(xlsxPath), true);
+  const xlsxForPy = xlsxPath.replace(/\\/g, '/');
+  const out = execSync(
+    `python -c "from openpyxl import load_workbook; wb=load_workbook('${xlsxForPy}'); print(','.join(wb.sheetnames))"`,
+    { cwd: repoRoot, encoding: 'utf8' }
+  ).trim();
+  assert.equal(out, 'Summary,Per-Prompt,Raw-JSON,Methodology');
+});

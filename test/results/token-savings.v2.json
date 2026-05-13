@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-05-13T18:54:04.655Z",
+  "measuredAt": "2026-05-13T19:00:56.268Z",
   "tokenizer": "cl100k_base",
   "methodology": "Baseline output tokens are a constant 120 placeholder (typical verbose reply). Real Claude-reply measurements deferred to FUTURE_WORK.md. Tokenizer is js-tiktoken cl100k_base — NOT Anthropic's tokenizer, so absolute counts are directional only.",
   "variants": [
