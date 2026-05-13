@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -194,4 +195,24 @@ test('token experiment separates proxy and tokenizer-backed measurements', async
   assert.ok(['js-tiktoken', 'proxy-fallback'].includes(fileFixture.tokenizer.method));
   assert.equal(typeof fileFixture.tokenizer.control_tokens, 'number');
   assert.equal(typeof fileFixture.tokenizer.variable_tokens, 'number');
+});
+
+test('tc-mirror-classical SKILL: SKILL.md and style guide exist', () => {
+  const skillPath = new URL('../skills/tc-mirror-classical/SKILL.md', import.meta.url);
+  const guidePath = new URL('../skills/tc-mirror-classical/references/classical-style-guide.md', import.meta.url);
+  assert.equal(existsSync(skillPath), true);
+  assert.equal(existsSync(guidePath), true);
+});
+
+test('tc-mirror-classical SKILL: style guide forbids tense particles', () => {
+  const guidePath = new URL('../skills/tc-mirror-classical/references/classical-style-guide.md', import.meta.url);
+  const g = readFileSync(guidePath, 'utf8');
+  assert.match(g, /Drop tense particles.*了.*過.*著/);
+});
+
+test('tc-mirror-classical SKILL: expected output drops vernacular particles', () => {
+  const fixturePath = new URL('../test/fixtures/expected-outputs/tc-mirror-classical/01-bugfix.md', import.meta.url);
+  const body = readFileSync(fixturePath, 'utf8');
+  assert.doesNotMatch(body, /已經|沒有|了/);
+  assert.match(body, /已修|無|須/);
 });
