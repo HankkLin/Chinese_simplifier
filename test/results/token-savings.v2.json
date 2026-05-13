@@ -1,0 +1,245 @@
+{
+  "measuredAt": "2026-05-13T18:54:04.655Z",
+  "tokenizer": "cl100k_base",
+  "methodology": "Baseline output tokens are a constant 120 placeholder (typical verbose reply). Real Claude-reply measurements deferred to FUTURE_WORK.md. Tokenizer is js-tiktoken cl100k_base — NOT Anthropic's tokenizer, so absolute counts are directional only.",
+  "variants": [
+    "tc-token-optimizer",
+    "tc-mirror-minimal",
+    "tc-mirror-glyphs",
+    "tc-mirror-classical"
+  ],
+  "fixtures": [
+    {
+      "id": "01-bugfix",
+      "promptText": "修一下 src/auth.js:42 的 null check，然後跑 npm test。",
+      "promptTokens": 19,
+      "enTranslatedPromptTokens": null,
+      "baselineOutputTokens": 120,
+      "variants": {
+        "tc-token-optimizer": {
+          "skillOverheadTokens": 720,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-minimal": {
+          "skillOverheadTokens": 425,
+          "expectedOutputTokens": 33,
+          "savingsPct": 72.5
+        },
+        "tc-mirror-glyphs": {
+          "skillOverheadTokens": 405,
+          "expectedOutputTokens": 30,
+          "savingsPct": 75
+        },
+        "tc-mirror-classical": {
+          "skillOverheadTokens": 360,
+          "expectedOutputTokens": 40,
+          "savingsPct": 66.7
+        }
+      }
+    },
+    {
+      "id": "02-feature-add",
+      "promptText": "請在 src/user.js 加上 deleteAccount 方法，要求軟刪除並寫單元測試。",
+      "promptTokens": 33,
+      "enTranslatedPromptTokens": null,
+      "baselineOutputTokens": 120,
+      "variants": {
+        "tc-token-optimizer": {
+          "skillOverheadTokens": 720,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-minimal": {
+          "skillOverheadTokens": 425,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-glyphs": {
+          "skillOverheadTokens": 405,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-classical": {
+          "skillOverheadTokens": 360,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        }
+      }
+    },
+    {
+      "id": "03-refactor",
+      "promptText": "我覺得 src/order.js 太長了，請把訂單驗證邏輯抽到 src/order-validator.js。",
+      "promptTokens": 39,
+      "enTranslatedPromptTokens": null,
+      "baselineOutputTokens": 120,
+      "variants": {
+        "tc-token-optimizer": {
+          "skillOverheadTokens": 720,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-minimal": {
+          "skillOverheadTokens": 425,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-glyphs": {
+          "skillOverheadTokens": 405,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-classical": {
+          "skillOverheadTokens": 360,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        }
+      }
+    },
+    {
+      "id": "04-stacktrace",
+      "promptText": "跑 npm test 的時候出現 TypeError: Cannot read properties of undefined (reading 'id') at src/cart.js:88，幫我看一下。",
+      "promptTokens": 37,
+      "enTranslatedPromptTokens": null,
+      "baselineOutputTokens": 120,
+      "variants": {
+        "tc-token-optimizer": {
+          "skillOverheadTokens": 720,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-minimal": {
+          "skillOverheadTokens": 425,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-glyphs": {
+          "skillOverheadTokens": 405,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-classical": {
+          "skillOverheadTokens": 360,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        }
+      }
+    },
+    {
+      "id": "05-codereview",
+      "promptText": "請審 PR #42 的 src/payment.js 變更，重點看錯誤處理與重試邏輯。",
+      "promptTokens": 38,
+      "enTranslatedPromptTokens": null,
+      "baselineOutputTokens": 120,
+      "variants": {
+        "tc-token-optimizer": {
+          "skillOverheadTokens": 720,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-minimal": {
+          "skillOverheadTokens": 425,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-glyphs": {
+          "skillOverheadTokens": 405,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-classical": {
+          "skillOverheadTokens": 360,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        }
+      }
+    },
+    {
+      "id": "06-docupdate",
+      "promptText": "README.md 的安裝指令過時了，請更新成最新的 marketplace install 流程。",
+      "promptTokens": 28,
+      "enTranslatedPromptTokens": null,
+      "baselineOutputTokens": 120,
+      "variants": {
+        "tc-token-optimizer": {
+          "skillOverheadTokens": 720,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-minimal": {
+          "skillOverheadTokens": 425,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-glyphs": {
+          "skillOverheadTokens": 405,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-classical": {
+          "skillOverheadTokens": 360,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        }
+      }
+    },
+    {
+      "id": "07-mixed-tc-en",
+      "promptText": "在 SignUp.tsx 加 input validation，要支援 email 跟 password strength，UX 文案用中文。",
+      "promptTokens": 26,
+      "enTranslatedPromptTokens": null,
+      "baselineOutputTokens": 120,
+      "variants": {
+        "tc-token-optimizer": {
+          "skillOverheadTokens": 720,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-minimal": {
+          "skillOverheadTokens": 425,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-glyphs": {
+          "skillOverheadTokens": 405,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-classical": {
+          "skillOverheadTokens": 360,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        }
+      }
+    },
+    {
+      "id": "08-pure-en-control",
+      "promptText": "Fix the null check at src/auth.js:42 and run npm test.",
+      "promptTokens": 15,
+      "enTranslatedPromptTokens": 15,
+      "baselineOutputTokens": 120,
+      "variants": {
+        "tc-token-optimizer": {
+          "skillOverheadTokens": 720,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-minimal": {
+          "skillOverheadTokens": 425,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-glyphs": {
+          "skillOverheadTokens": 405,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        },
+        "tc-mirror-classical": {
+          "skillOverheadTokens": 360,
+          "expectedOutputTokens": null,
+          "savingsPct": null
+        }
+      }
+    }
+  ]
+}

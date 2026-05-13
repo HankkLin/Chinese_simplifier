@@ -1,0 +1,1 @@
+請在 src/user.js 加上 deleteAccount 方法，要求軟刪除並寫單元測試。
