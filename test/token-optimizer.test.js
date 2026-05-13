@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -194,4 +195,26 @@ test('token experiment separates proxy and tokenizer-backed measurements', async
   assert.ok(['js-tiktoken', 'proxy-fallback'].includes(fileFixture.tokenizer.method));
   assert.equal(typeof fileFixture.tokenizer.control_tokens, 'number');
   assert.equal(typeof fileFixture.tokenizer.variable_tokens, 'number');
+});
+
+test('tc-mirror-glyphs SKILL: SKILL.md and glyph dictionary exist', () => {
+  const skillPath = new URL('../skills/tc-mirror-glyphs/SKILL.md', import.meta.url);
+  const dictPath = new URL('../skills/tc-mirror-glyphs/references/glyph-dictionary.md', import.meta.url);
+  assert.equal(existsSync(skillPath), true);
+  assert.equal(existsSync(dictPath), true);
+});
+
+test('tc-mirror-glyphs SKILL: glyph dictionary contains required glyphs', () => {
+  const dictPath = new URL('../skills/tc-mirror-glyphs/references/glyph-dictionary.md', import.meta.url);
+  const dict = readFileSync(dictPath, 'utf8');
+  for (const g of ['→', '✓', '∵', '⊕', '⊖', '@', 'Δ']) {
+    assert.ok(dict.includes(g), `dictionary missing glyph ${g}`);
+  }
+});
+
+test('tc-mirror-glyphs SKILL: expected output uses glyphs not words', () => {
+  const fixturePath = new URL('../test/fixtures/expected-outputs/tc-mirror-glyphs/01-bugfix.md', import.meta.url);
+  const body = readFileSync(fixturePath, 'utf8');
+  assert.match(body, /✓|⊕|@/);
+  assert.doesNotMatch(body, /完成|新增|在第/);
 });
