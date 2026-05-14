@@ -1,0 +1,1 @@
+我覺得 src/order.js 太長了，請把訂單驗證邏輯抽到 src/order-validator.js。

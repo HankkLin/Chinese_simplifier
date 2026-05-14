@@ -1,4 +1,4 @@
-Measured on 2026-05-10. Tokenizer counts use js-tiktoken (cl100k_base) and are the source of truth; proxy counts are a fair char-weighted estimate for offline runs.
+Measured on 2026-05-14. Tokenizer counts use js-tiktoken (cl100k_base) and are the source of truth; proxy counts are a fair char-weighted estimate for offline runs.
 
 | Fixture | Source | Transformation | Proxy control | Proxy variable | Proxy reduction | Tokenizer method | Tokenizer control | Tokenizer variable | Tokenizer reduction | Gap (pp) | Threshold |
 |---|---|---|---:|---:|---:|---|---:|---:|---:|---:|---:|

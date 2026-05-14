@@ -1,0 +1,1 @@
+修一下 src/auth.js:42 的 null check，然後跑 npm test。

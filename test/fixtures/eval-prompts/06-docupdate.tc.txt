@@ -1,0 +1,1 @@
+README.md 的安裝指令過時了，請更新成最新的 marketplace install 流程。

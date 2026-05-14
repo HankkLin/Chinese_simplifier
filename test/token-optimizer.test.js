@@ -1,8 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { getCjkRatio, hasCjk, shouldOptimizeText } from '../src/cjk.js';
 import { translateWithProtection } from '../src/translate.js';
@@ -194,4 +198,66 @@ test('token experiment separates proxy and tokenizer-backed measurements', async
   assert.ok(['js-tiktoken', 'proxy-fallback'].includes(fileFixture.tokenizer.method));
   assert.equal(typeof fileFixture.tokenizer.control_tokens, 'number');
   assert.equal(typeof fileFixture.tokenizer.variable_tokens, 'number');
+});
+
+test('tc-mirror-minimal SKILL: SKILL.md exists', () => {
+  const skillPath = join(__dirname, '..', 'skills', 'tc-mirror-minimal', 'SKILL.md');
+  assert.equal(existsSync(skillPath), true);
+});
+
+test('tc-mirror-minimal SKILL: SKILL.md mandates language mirror', () => {
+  const skillPath = join(__dirname, '..', 'skills', 'tc-mirror-minimal', 'SKILL.md');
+  const body = readFileSync(skillPath, 'utf8');
+  assert.match(body, /Render the FINAL OUTPUT in the same language as the user/);
+  assert.match(body, /Field labels \(STATUS, CHANGES, NEXT, ERRORS\) remain English/);
+});
+
+test('tc-mirror-minimal SKILL: expected-output fixture is TC, not EN', () => {
+  const fixturePath = join(__dirname, 'fixtures', 'expected-outputs', 'tc-mirror-minimal', '01-bugfix.md');
+  const body = readFileSync(fixturePath, 'utf8');
+  const changesLine = body.split('\n').find((l) => l.startsWith('CHANGES:'));
+  assert.ok(changesLine, 'CHANGES: line missing from fixture');
+  assert.match(changesLine, /[一-鿿]/);
+});
+
+test('tc-mirror-glyphs SKILL: SKILL.md and glyph dictionary exist', () => {
+  const skillPath = new URL('../skills/tc-mirror-glyphs/SKILL.md', import.meta.url);
+  const dictPath = new URL('../skills/tc-mirror-glyphs/references/glyph-dictionary.md', import.meta.url);
+  assert.equal(existsSync(skillPath), true);
+  assert.equal(existsSync(dictPath), true);
+});
+
+test('tc-mirror-glyphs SKILL: glyph dictionary contains required glyphs', () => {
+  const dictPath = new URL('../skills/tc-mirror-glyphs/references/glyph-dictionary.md', import.meta.url);
+  const dict = readFileSync(dictPath, 'utf8');
+  for (const g of ['→', '✓', '∵', '⊕', '⊖', '@', 'Δ']) {
+    assert.ok(dict.includes(g), `dictionary missing glyph ${g}`);
+  }
+});
+
+test('tc-mirror-glyphs SKILL: expected output uses glyphs not words', () => {
+  const fixturePath = new URL('../test/fixtures/expected-outputs/tc-mirror-glyphs/01-bugfix.md', import.meta.url);
+  const body = readFileSync(fixturePath, 'utf8');
+  assert.match(body, /✓|⊕|@/);
+  assert.doesNotMatch(body, /完成|新增|在第/);
+});
+
+test('tc-mirror-classical SKILL: SKILL.md and style guide exist', () => {
+  const skillPath = new URL('../skills/tc-mirror-classical/SKILL.md', import.meta.url);
+  const guidePath = new URL('../skills/tc-mirror-classical/references/classical-style-guide.md', import.meta.url);
+  assert.equal(existsSync(skillPath), true);
+  assert.equal(existsSync(guidePath), true);
+});
+
+test('tc-mirror-classical SKILL: style guide forbids tense particles', () => {
+  const guidePath = new URL('../skills/tc-mirror-classical/references/classical-style-guide.md', import.meta.url);
+  const g = readFileSync(guidePath, 'utf8');
+  assert.match(g, /Drop tense particles.*了.*過.*著/);
+});
+
+test('tc-mirror-classical SKILL: expected output drops vernacular particles', () => {
+  const fixturePath = new URL('../test/fixtures/expected-outputs/tc-mirror-classical/01-bugfix.md', import.meta.url);
+  const body = readFileSync(fixturePath, 'utf8');
+  assert.doesNotMatch(body, /已經|沒有|了/);
+  assert.match(body, /已修|無|須/);
 });

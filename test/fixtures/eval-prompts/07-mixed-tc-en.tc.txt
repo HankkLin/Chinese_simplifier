@@ -1,0 +1,1 @@
+在 SignUp.tsx 加 input validation，要支援 email 跟 password strength，UX 文案用中文。
